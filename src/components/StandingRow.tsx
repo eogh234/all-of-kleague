@@ -8,15 +8,19 @@ import { View, Text, StyleSheet } from 'react-native';
 import { COLORS, SPACING, FONT_SIZES } from '../constants';
 import type { TeamStanding } from '../models';
 
-interface StandingRowProps {
-  standing: TeamStanding;
-  isHeader?: boolean;
+interface StandingRowHeaderProps {
+  isHeader: true;
+  standing?: never;
 }
 
-export const StandingRow: React.FC<StandingRowProps> = ({ 
-  standing, 
-  isHeader = false 
-}) => {
+interface StandingRowDataProps {
+  isHeader?: false;
+  standing: TeamStanding;
+}
+
+type StandingRowProps = StandingRowHeaderProps | StandingRowDataProps;
+
+export const StandingRow: React.FC<StandingRowProps> = (props) => {
   const getFormColor = (result: string): string => {
     switch (result) {
       case 'W': return COLORS.success;
@@ -26,7 +30,7 @@ export const StandingRow: React.FC<StandingRowProps> = ({
     }
   };
 
-  if (isHeader) {
+  if (props.isHeader) {
     return (
       <View style={[styles.container, styles.headerContainer]}>
         <Text style={[styles.position, styles.headerText]}>#</Text>
@@ -40,6 +44,8 @@ export const StandingRow: React.FC<StandingRowProps> = ({
       </View>
     );
   }
+
+  const { standing } = props;
 
   return (
     <View style={[

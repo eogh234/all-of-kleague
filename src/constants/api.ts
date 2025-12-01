@@ -13,7 +13,11 @@ const API_BASE_URLS = {
 // Get current environment (defaults to development)
 const getEnvironment = (): keyof typeof API_BASE_URLS => {
   if (__DEV__) return 'development';
-  // Can be extended to check for staging environment
+  // Check for staging environment via app config or environment variable
+  // In Expo, this can be set via app.config.js or eas.json
+  // Example: expo.extra.environment in app.json
+  const extraEnv = process.env.EXPO_PUBLIC_ENVIRONMENT;
+  if (extraEnv === 'staging') return 'staging';
   return 'production';
 };
 

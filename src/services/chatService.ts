@@ -14,6 +14,8 @@ class ChatService {
   private messageHandlers: Map<string, MessageHandler[]> = new Map();
   private reconnectAttempts = 0;
   private maxReconnectAttempts = 5;
+  private intentionalDisconnect = false;
+  private currentUserId: string | null = null;
 
   /**
    * Connect to WebSocket server
@@ -21,6 +23,8 @@ class ChatService {
   connect(userId: string): Promise<void> {
     return new Promise((resolve, reject) => {
       try {
+        this.intentionalDisconnect = false;
+        this.currentUserId = userId;
         this.socket = new WebSocket(`${WEBSOCKET_URL}?userId=${userId}`);
 
         this.socket.onopen = () => {
@@ -40,7 +44,9 @@ class ChatService {
 
         this.socket.onclose = () => {
           console.log('WebSocket disconnected');
-          this.attemptReconnect(userId);
+          if (!this.intentionalDisconnect && this.currentUserId) {
+            this.attemptReconnect(this.currentUserId);
+          }
         };
 
         this.socket.onerror = (error) => {
@@ -57,11 +63,13 @@ class ChatService {
    * Disconnect from WebSocket server
    */
   disconnect(): void {
+    this.intentionalDisconnect = true;
     if (this.socket) {
       this.socket.close();
       this.socket = null;
     }
     this.messageHandlers.clear();
+    this.currentUserId = null;
   }
 
   /**

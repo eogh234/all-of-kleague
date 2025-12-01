@@ -116,10 +116,7 @@ export const StandingsScreen: React.FC = () => {
 
       {/* Standings Table */}
       <ScrollView style={styles.tableContainer}>
-        <StandingRow 
-          standing={{} as TeamStanding} 
-          isHeader={true} 
-        />
+        <StandingRow isHeader={true} />
         {standings.map((standing) => (
           <StandingRow 
             key={standing.team.id} 
