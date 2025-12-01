@@ -9,6 +9,10 @@ on:
 env:
   NODE_VERSION: '20.x'
 
+# Default permissions for all jobs
+permissions:
+  contents: read
+
 jobs:
   # Lint and Type Check
   lint:
